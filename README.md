@@ -70,4 +70,4 @@ python herramientas/graficos.py
 ## Requisitos
 - Python 3.x
 - Paquetes en `requerimientos.txt` (incluye `numpy`, `pandas`, `scikit-learn`, `matplotlib`, `openpyxl`)
->>>>>>> 1a542c3 (Tarea2 Parte 2 Primer commit)
+
