@@ -1,0 +1,73 @@
+{
+  "datos": {
+    "ruta": "../datos/Dry_Bean_Dataset.xlsx",
+    "etiqueta": "Class",
+    "proporcion_prueba": 0.2,
+    "semilla": 42,
+    "escalar": true
+  },
+  "entrenamiento": {
+    "epocas": 20,
+    "eliminar_cada": 5,
+    "limite_eval_entrenamiento": 40000
+  },
+  "busqueda": {
+    "regresion_logistica": [
+      {
+        "nombre": "LR_opt_lote256",
+        "penalizacion": "l2",
+        "alpha": 0.0001,
+        "ritmo_aprendizaje": "optimal",
+        "tamanio_lote": 256
+      },
+      {
+        "nombre": "LR_const1e-3_lote512",
+        "penalizacion": "l2",
+        "alpha": 0.0001,
+        "ritmo_aprendizaje": "constant",
+        "eta0": 0.001,
+        "tamanio_lote": 512
+      },
+      {
+        "nombre": "LR_inverso_lote128",
+        "penalizacion": "l2",
+        "alpha": 5e-05,
+        "ritmo_aprendizaje": "invscaling",
+        "eta0": 0.01,
+        "power_t": 0.5,
+        "tamanio_lote": 128
+      }
+    ],
+    "svm": [
+      {
+        "nombre": "SVM_hinge_opt_lote256",
+        "perdida": "hinge",
+        "penalizacion": "l2",
+        "alpha": 0.0001,
+        "ritmo_aprendizaje": "optimal",
+        "tamanio_lote": 256
+      },
+      {
+        "nombre": "SVM_hinge_const1e-3_lote512",
+        "perdida": "hinge",
+        "penalizacion": "l2",
+        "alpha": 0.0001,
+        "ritmo_aprendizaje": "constant",
+        "eta0": 0.001,
+        "tamanio_lote": 512
+      },
+      {
+        "nombre": "SVM_modhuber_const5e-4_lote256",
+        "perdida": "modified_huber",
+        "penalizacion": "l2",
+        "alpha": 5e-05,
+        "ritmo_aprendizaje": "constant",
+        "eta0": 0.0005,
+        "tamanio_lote": 256
+      }
+    ]
+  },
+  "salida": {
+    "raiz": "../resultados"
+  }
+}
