@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 # Tarea2IAParte2
-Parte 2 de la tarea 2 de Inteligencia Artificial
-=======
-# Tarea 2 — Parte 2 (Clasificación | Listo para VS Code/Jupyter)
-
-Repositorio con la **implementación de la Parte 2**: entrenamiento supervisado con eliminación periódica y selección de los 2 mejores modelos. Pensado para correr sin fricción en **VS Code** o **Jupyter**.
 
 ## Carpeta y archivos clave
 ```
