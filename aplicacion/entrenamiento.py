@@ -1,3 +1,10 @@
+"""
+este modulo contiene la logica para entrenar modelos de machine learning usando
+descenso de gradiente estocastico con busqueda de hiperparametros y eliminacion
+de candidatos durante el entrenamiento. se enfoca en modelos de regresion logistica
+y svm lineal.
+"""
+
 from __future__ import annotations
 import os, json, time, numpy as np, pandas as pd
 from dataclasses import dataclass
@@ -12,6 +19,16 @@ SEMILLA = 42
 
 @dataclass
 class Candidato:
+    """
+    representa un candidato de modelo en la busqueda de hiperparametros.
+    
+    atributos:
+    - nombre: identificador unico del candidato.
+    - tipo: tipo de modelo ('regresion_logistica' o 'svm').
+    - parametros: diccionario con los hiperparametros del modelo.
+    - modelo: instancia del modelo sklearn (inicialmente None).
+    - historial: lista de diccionarios con el historial de entrenamiento por epoca.
+    """
     nombre: str
     tipo: str
     parametros: Dict[str, Any]
@@ -19,9 +36,30 @@ class Candidato:
     historial: list = None
 
 def _mapear_ritmo(s: str):
+    """
+    mapea el ritmo de aprendizaje a un valor valido para sklearn.
+    
+    parametros:
+    - s: cadena con el ritmo deseado.
+    
+    retorna:
+    - ritmo mapeado o 'optimal' si no es valido.
+    """
     return s if s in ("optimal","constant","invscaling","adaptive") else "optimal"
 
 def _construir_modelo(c: Candidato):
+    """
+    construye un modelo SGDClassifier basado en el tipo y parametros del candidato.
+    
+    parametros:
+    - c: instancia de Candidato con tipo y parametros.
+    
+    retorna:
+    - modelo configurado.
+    
+    lanza:
+    - ValueError si el tipo no es soportado.
+    """
     if c.tipo == "regresion_logistica":
         return SGDClassifier(
             loss="log_loss",
@@ -46,6 +84,18 @@ def _construir_modelo(c: Candidato):
         raise ValueError("Tipo de modelo no soportado")
 
 def _iter_lotes(X, y, tamanio, rng):
+    """
+    genera lotes aleatorios de los datos para entrenamiento incremental.
+    
+    parametros:
+    - X: matriz de caracteristicas.
+    - y: vector de etiquetas.
+    - tamanio: tamanio del lote.
+    - rng: generador de numeros aleatorios.
+    
+    produce:
+    - tuplas (X_lote, y_lote) para cada lote.
+    """
     n = X.shape[0]
     idx = rng.permutation(n)
     for i in range(0, n, tamanio):
@@ -53,6 +103,23 @@ def _iter_lotes(X, y, tamanio, rng):
         yield X[sel], y[sel]
 
 def ejecutar(ruta_config: str):
+    """
+    ejecuta el proceso completo de entrenamiento con busqueda de hiperparametros.
+    
+    parametros:
+    - ruta_config: ruta al archivo de configuracion json.
+    
+    retorna:
+    - ruta del directorio de salida con resultados.
+    
+    el proceso incluye:
+    - carga de configuracion y datos.
+    - preparacion de datos (division, escalado).
+    - creacion de candidatos de modelos.
+    - entrenamiento por epocas con eliminacion de peores candidatos.
+    - evaluacion final de los mejores candidatos en conjunto de prueba.
+    - guardado de resultados en archivos csv y json.
+    """
     with open(ruta_config, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
@@ -118,7 +185,7 @@ def ejecutar(ruta_config: str):
         if (ep % eliminar_cada == 0) and len(pool) > 2:
             peor_idx = min([(c.historial[-1]["exactitud_entrenamiento"], i) for i, c in enumerate(pool)])[1]
             eliminado = pool.pop(peor_idx)
-            print(f"[época {ep}] DESCARTADO → {eliminado.nombre} ({eliminado.tipo})")
+            print(f"[epoca {ep}] descartado → {eliminado.nombre} ({eliminado.tipo})")
 
     pool_ordenado = sorted(pool, key=lambda c: c.historial[-1]["exactitud_entrenamiento"], reverse=True)
     finalistas = pool_ordenado[:2]
@@ -132,7 +199,7 @@ def ejecutar(ruta_config: str):
         filas_test.append({"nombre": c.nombre, "tipo": c.tipo, "exactitud_prueba": acc,
                            "informe_clasificacion": rep, "matriz_confusion": cm})
         print(f"\n=== {c.nombre} ({c.tipo}) ===")
-        print(f"Exactitud en prueba: {acc:.4f}")
+        print(f"exactitud en prueba: {acc:.4f}")
         print(rep)
 
     pd.DataFrame(filas_log).to_csv(os.path.join(run_dir,"registro_entrenamiento.csv"), index=False)

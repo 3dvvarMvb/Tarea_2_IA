@@ -1,6 +1,6 @@
 {
   "datos": {
-    "ruta": "../datos/Dry_Bean_Dataset.xlsx",
+    "ruta": "../datos/Dry_Bean_Dataset.csv",
     "etiqueta": "Class",
     "proporcion_prueba": 0.2,
     "semilla": 42,
