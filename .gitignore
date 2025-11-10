@@ -4,14 +4,6 @@ venv/
 __pycache__/
 .ipynb_checkpoints/
 
-# Resultados y artefactos
-resultados/
-**/ejecucion-*/
-**/*.png
-
-# Datos locales
-datos/*.xlsx
-datos/*.csv
 
 # Sistema
 .DS_Store

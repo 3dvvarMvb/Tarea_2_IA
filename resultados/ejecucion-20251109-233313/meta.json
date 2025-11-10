@@ -1,0 +1,7 @@
+{
+  "etiqueta_usada": "Class",
+  "candidatos_ordenados": [
+    "LR_inverso_lote128",
+    "SVM_modhuber_const5e-4_lote256"
+  ]
+}
