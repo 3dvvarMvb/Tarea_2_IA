@@ -9,7 +9,7 @@ from typing import Any, Dict
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 def leer_tabla(ruta: str) -> pd.DataFrame:
     """
@@ -96,11 +96,11 @@ def preparar_datos_clustering(
     - columna_etiqueta: nombre de la columna de etiquetas, o None para inferir.
     - proporcion_prueba: fraccion de datos para prueba (0.0 a 1.0).
     - semilla: semilla para division aleatoria.
-    - escalar: si escalar las caracteristicas con StandardScaler.
+    - escalar: si escalar las caracteristicas con MinMaxScaler.
     
     retorna:
     - diccionario con X_entrenamiento, X_prueba, y_entrenamiento, y_prueba,
-      etiqueta, mapa_etiquetas, escalador, df_features, y_completa.
+    etiqueta, mapa_etiquetas, escalador, df_features, y_completa.
     """
     df = leer_tabla(ruta_datos)
     if not columna_etiqueta:
@@ -118,7 +118,7 @@ def preparar_datos_clustering(
 
     escalador = None
     if escalar:
-        escalador = StandardScaler()
+        escalador = MinMaxScaler()
         X_df = pd.DataFrame(
             escalador.fit_transform(X_df),
             columns=X_df.columns,
