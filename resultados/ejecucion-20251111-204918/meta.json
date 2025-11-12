@@ -1,0 +1,16 @@
+{
+  "etiqueta_usada": "Class",
+  "candidatos_ordenados": [
+    "LR_inverso_lote128",
+    "SVM_modhuber_const5e-4_lote256"
+  ],
+  "mapa_etiquetas": {
+    "1": "BARBUNYA",
+    "2": "BOMBAY",
+    "3": "CALI",
+    "4": "DERMASON",
+    "5": "HOROZ",
+    "6": "SEKER",
+    "7": "SIRA"
+  }
+}

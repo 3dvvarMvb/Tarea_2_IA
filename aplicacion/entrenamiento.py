@@ -135,7 +135,7 @@ def ejecutar(ruta_config: str):
     os.makedirs(run_dir, exist_ok=True)
 
     df = leer_tabla(ruta_datos)
-    X, y, etiqueta_usada = preparar_Xy(df, cfg["datos"].get("etiqueta"))
+    X, y, etiqueta_usada, mapa_etiquetas = preparar_Xy(df, cfg["datos"].get("etiqueta"))
     Xtr, Xte, ytr, yte = train_test_split(
         X, y, test_size=cfg["datos"].get("proporcion_prueba",0.2),
         random_state=cfg["datos"].get("semilla",42), stratify=y
@@ -204,7 +204,12 @@ def ejecutar(ruta_config: str):
 
     pd.DataFrame(filas_log).to_csv(os.path.join(run_dir,"registro_entrenamiento.csv"), index=False)
     pd.DataFrame(filas_test).to_csv(os.path.join(run_dir,"resumen_top2.csv"), index=False)
+    meta = {
+        "etiqueta_usada": etiqueta_usada,
+        "candidatos_ordenados": [c.nombre for c in pool_ordenado],
+        "mapa_etiquetas": {str(k): v for k, v in (mapa_etiquetas or {}).items()},
+    }
     with open(os.path.join(run_dir,"meta.json"), "w", encoding="utf-8") as f:
-        json.dump({"etiqueta_usada": etiqueta_usada, "candidatos_ordenados": [c.nombre for c in pool_ordenado]}, f, indent=2, ensure_ascii=False)
+        json.dump(meta, f, indent=2, ensure_ascii=False)
 
     return run_dir

@@ -58,6 +58,7 @@ def preparar_Xy(df: pd.DataFrame, columna_etiqueta: str | None):
     - X: matriz de caracteristicas como numpy array.
     - y: vector de etiquetas como numpy array de enteros.
     - columna_etiqueta: nombre de la columna usada como etiqueta.
+    - mapa_etiquetas: diccionario que mapea codigo entero a etiqueta original.
     """
     if not columna_etiqueta:
         candidatos = [c for c in df.columns if c.lower() in ("class","label","target","y")]
@@ -70,13 +71,20 @@ def preparar_Xy(df: pd.DataFrame, columna_etiqueta: str | None):
         X_df[c] = pd.to_numeric(X_df[c], errors="coerce")
     X_df = X_df.fillna(X_df.median(numeric_only=True))
 
+    mapa_etiquetas = None
     if y_raw.dtype.kind in "OUSb":
-        y = pd.Categorical(y_raw).codes + 1
+        categorias = pd.Categorical(y_raw)
+        y = categorias.codes + 1
+        mapa_etiquetas = {
+            int(code + 1): str(label) for code, label in enumerate(categorias.categories)
+        }
     else:
         y = y_raw.to_numpy().astype(int)
+        valores = pd.unique(y)
+        mapa_etiquetas = {int(v): str(v) for v in sorted(valores)}
 
     X = X_df.to_numpy(dtype="float64")
-    return X, y.astype(int), columna_etiqueta
+    return X, y.astype(int), columna_etiqueta, mapa_etiquetas
 
 def preparar_datos_clustering(
     ruta_datos: str,
